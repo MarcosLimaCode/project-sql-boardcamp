@@ -1,9 +1,9 @@
 import express, { json } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import gamesRouter from "./routes/games.router.js";
-import custumersRouter from "./routes/costumers.router.js";
-import rentalsRouter from "./routes/retals.router.js";
+import gamesRouter from "./routers/games.router.js";
+import custumersRouter from "./routers/costumers.router.js";
+import rentalsRouter from "./routers/retals.router.js";
 
 dotenv.config();
 
