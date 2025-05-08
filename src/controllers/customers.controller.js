@@ -1,7 +1,8 @@
 import { db } from "../database/database.js";
 
 export async function getCustomers(req, res) {
-    res.status(200).send("getCustomers");
+    const result = await db.query(`SELECT * FROM customers`);
+    return res.send(result.rows);
 }
 
 export async function createCustomers(req, res) {

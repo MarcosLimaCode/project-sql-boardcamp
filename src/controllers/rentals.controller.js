@@ -17,7 +17,9 @@ export async function getRentals(req, res) {
         gameId: rental.gameId,
         rentDate: moment(rental.rentDate).format('YYYY-MM-DD'),
         daysRented: rental.daysRented,
-        returnDate: rental.returnDate,
+        returnDate: moment(rental.returnDate).isValid() 
+            ? moment(rental.returnDate).format('YYYY-MM-DD') 
+            : null,
         originalPrice: rental.originalPrice,
         delayFee: rental.delayFee,
         customer: {
@@ -40,11 +42,33 @@ export async function createRentals(req, res) {
     const findPrice = await db.query(`SELECT "pricePerDay" FROM games WHERE id = $1;`, [gameId])
     const originalPrice = findPrice.rows[0].pricePerDay;
 
-    console.log(rentDate)
     await db.query(`
         INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
         VALUES ($1, $2, $3, $4, $5, $6, $7);`, [customerId, gameId, rentDate, daysRented, null, originalPrice, null]);
 
     return res.sendStatus(201);
+
+}
+
+export async function returnRentals(req, res) {
+    const rentalId = req.params.id; 
+    const returnDate = moment().format('YYYY-MM-DD');
+    await db.query(`
+        UPDATE rentals 
+            SET "returnDate" = $1, 
+                "delayFee" = GREATEST((($1 - "rentDate") - "daysRented")  * "originalPrice", 0)
+            WHERE id = $2;`, [returnDate, rentalId])
+
+    return res.sendStatus(201);
+
+}
+
+export async function deleteRentals(req, res) {
+    const rentalId = req.params.id; 
+    await db.query(`
+        DELETE FROM rentals 
+            WHERE id = $1;`, [rentalId])
+
+    return res.sendStatus(200);
 
 }
