@@ -12,5 +12,5 @@ export async function createGames(req, res) {
         INSERT INTO games (name, image, "stockTotal", "pricePerDay")
         VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
 
-    return res.sendStatus(200);
+    return res.sendStatus(201);
 }
