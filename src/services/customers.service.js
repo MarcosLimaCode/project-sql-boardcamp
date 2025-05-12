@@ -1,10 +1,17 @@
-import { conflictError } from "../error/errors.js";
-import { createCustomersRepository, getCustomersRepository, verifyNameRepository } from "../repositories/customers.repository.js";
+import { conflictError, notFoundError } from "../error/errors.js";
+import { createCustomersRepository, getCustomersByIdRepository, getCustomersRepository, verifyNameRepository } from "../repositories/customers.repository.js";
 
 export async function getCustomersServices() {
     const result = await getCustomersRepository();
 
     return result.rows;
+}
+
+export async function getCustomersByIdServices(id) {
+    const result = await getCustomersByIdRepository(id);
+    if(result.length === 0) throw notFoundError("Cliente");
+
+    return result;
 }
 
 export async function createCustomersServices({ name, phone, cpf }) {

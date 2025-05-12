@@ -5,6 +5,12 @@ export async function getCustomersRepository() {
     return result;
 }
 
+export async function getCustomersByIdRepository(id) {
+    const result = await db.query(`SELECT * FROM customers WHERE id = $1;`, [id]);
+    return result.rows;
+}
+
+
 export async function verifyNameRepository(cpf) {
     const result = await db.query(`
         SELECT * FROM customers 
