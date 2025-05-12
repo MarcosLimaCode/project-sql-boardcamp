@@ -1,19 +1,16 @@
 import express, { json } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import gamesRouter from "./routers/games.router.js";
-import custumersRouter from "./routers/customers.router.js";
-import rentalsRouter from "./routers/rentals.router.js";
+import router from "./routers/index.router.js";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(json());
-
-app.use(gamesRouter);
-app.use(custumersRouter);
-app.use(rentalsRouter);
+app.use(router);
+app.use(errorHandler)
 
 
 const port = process.env.PORT;
