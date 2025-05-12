@@ -12,7 +12,7 @@ export async function createRentals(req, res) {
 
 export async function returnRentals(req, res) {
     await returnRentalsService(req.params.id);
-    return res.sendStatus(201);
+    return res.sendStatus(200);
 }
 
 export async function deleteRentals(req, res) {
