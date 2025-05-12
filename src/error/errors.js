@@ -1,23 +1,27 @@
-export default function conflictError(entity) {
+export function conflictError(entity) {
     return {
-        type: "CONFLICT"
+        type: "CONFLICT",
+        message: `${entity} já cadastrado.`
     }
 }
 
-export default function notFoundError(entity) {
+export function notFoundError(entity) {
     return {
-        type: "NOT FOUND"
+        type: "NOT FOUND",
+        message: `${entity} não encontrado.`
     }
 }
 
-export default function unprocessableError(entity) {
+export function unprocessableError(entity) {
     return {
-        type: "UNPROCESSABLE ENTITY"
+        type: "UNPROCESSABLE ENTITY",
+        message: `${entity}`
     }
 }
 
-export default function badRequestError(entity) {
+export function badRequestError() {
     return {
-        type: "BAD REQUEST"
+        type: "BAD REQUEST",
+        message: "O aluguel ainda não foi finalizdo."
     }
 }

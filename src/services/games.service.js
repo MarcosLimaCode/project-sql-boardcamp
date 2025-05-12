@@ -1,4 +1,5 @@
-import { createGamesRepository, getGamesRepository } from "../repositories/games.repository.js";
+import { conflictError } from "../error/errors.js";
+import { createGamesRepository, getGamesRepository, verifyGameRepository } from "../repositories/games.repository.js";
 
 export async function getGamesService() {
     const result = await getGamesRepository();
@@ -6,6 +7,8 @@ export async function getGamesService() {
 }
 
 export async function createGamesService({ name, image, stockTotal, pricePerDay }) {
-    const result =  await createGamesRepository(name, image, stockTotal, pricePerDay);
-    return result
+    const registredGame =  await verifyGameRepository(name);
+    if(registredGame.length !== 0) throw conflictError("Jogo");
+
+    return await createGamesRepository(name, image, stockTotal, pricePerDay);
 }

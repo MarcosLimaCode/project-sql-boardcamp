@@ -1,5 +1,6 @@
 import moment from "moment";
-import { createRentalsRepository, deleteRentalsRepository, findPriceRepository, getRentalsRepository, returnRentalsRepository } from "../repositories/rentals.repository.js";
+import { createRentalsRepository, deleteRentalsRepository, findPriceRepository, getRentalsRepository, returnRentalsRepository, verifyCustomerIdRepository, verifyGameIdRepository, verifyGameRentedRepository, verifyGameStockRepository, verifyRentalIdRepository } from "../repositories/rentals.repository.js";
+import { badRequestError, notFoundError, unprocessableError } from "../error/errors.js";
 
 export async function getRentalsService() {
     const results = await getRentalsRepository();
@@ -10,8 +11,8 @@ export async function getRentalsService() {
         gameId: rental.gameId,
         rentDate: moment(rental.rentDate).format('YYYY-MM-DD'),
         daysRented: rental.daysRented,
-        returnDate: moment(rental.returnDate).isValid() 
-            ? moment(rental.returnDate).format('YYYY-MM-DD') 
+        returnDate: moment(rental.returnDate).isValid()
+            ? moment(rental.returnDate).format('YYYY-MM-DD')
             : null,
         originalPrice: rental.originalPrice,
         delayFee: rental.delayFee,
@@ -29,22 +30,39 @@ export async function getRentalsService() {
 }
 
 export async function createRentalsService({ customerId, gameId, daysRented }) {
+    if (await verifyGameIdRepository(gameId) === 0) throw notFoundError("Jogo");
+    if (await verifyCustomerIdRepository(customerId) === 0) throw notFoundError("Cliente");
+
+    const rentedGames = await verifyGameRentedRepository(gameId);
+    const currentRented = rentedGames.filter(rented => rented.returnDate === null).length;
+    const stockTotal = await verifyGameStockRepository(gameId);
+    if (currentRented === stockTotal) throw unprocessableError("O jogo selecionado não está disponível.");
+
     const rentDate = moment().format('YYYY-MM-DD');
     const findPrice = await findPriceRepository(gameId);
     const originalPrice = findPrice.rows[0].pricePerDay * daysRented;
-    const result = await createRentalsRepository(customerId, gameId, daysRented, rentDate, originalPrice);
-    
-    return result;
+
+    return await createRentalsRepository(customerId, gameId, daysRented, rentDate, originalPrice);
 }
 
 export async function returnRentalsService(rentalId) {
+    const rentals = await verifyRentalIdRepository(rentalId);
+
+    if (rentals.length === 0) throw notFoundError("Aluguel");
+    if (rentals[0].returnDate !== null) throw unprocessableError("Aluguel já finalizado.");
+
     const returnDate = moment().format('YYYY-MM-DD');
-    const result = returnRentalsRepository(returnDate, rentalId);
+    const result = await returnRentalsRepository(returnDate, rentalId);
 
     return result
 }
 
 export async function deleteRentalsService(rentalId) {
+    const rentals = await verifyRentalIdRepository(rentalId);
+    if (rentals.length === 0) throw notFoundError("Aluguel");
+    if (rentals[0].returnDate === null) throw badRequestError();
+
+
     const result = deleteRentalsRepository(rentalId);
 
     return result;

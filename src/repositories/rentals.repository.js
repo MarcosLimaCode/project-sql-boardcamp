@@ -13,6 +13,34 @@ export async function getRentalsRepository() {
     return results
 }
 
+export async function verifyGameIdRepository(gameId) {
+    const result = await db.query(`
+        SELECT * FROM games 
+            WHERE id = $1;`, [gameId]);
+    return result.rows.length
+}
+
+export async function verifyGameStockRepository(gameId) {
+    const result = await db.query(`
+        SELECT * FROM games 
+            WHERE id = $1;`, [gameId]);
+    return result.rows[0].stockTotal
+}
+
+export async function verifyCustomerIdRepository(customerId) {
+    const result = await db.query(`
+        SELECT * FROM customers 
+            WHERE id = $1;`, [customerId]);
+    return result.rows.length
+}
+
+export async function verifyGameRentedRepository(gameId) {
+    const result = await db.query(`
+        SELECT * FROM rentals 
+            WHERE "gameId" = $1;`, [gameId]);
+    return result.rows
+}
+
 export async function findPriceRepository(gameId) {
     const result = await db.query(`SELECT "pricePerDay" FROM games WHERE id = $1;`, [gameId])
     return result;
@@ -22,8 +50,15 @@ export async function createRentalsRepository(customerId, gameId, daysRented, re
     const result = await db.query(`
         INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
         VALUES ($1, $2, $3, $4, $5, $6, $7);`, [customerId, gameId, rentDate, daysRented, null, originalPrice, null]);
-    
+
     return result;
+}
+
+export async function verifyRentalIdRepository(gameId) {
+    const result = await db.query(`
+        SELECT * FROM rentals 
+            WHERE id = $1;`, [gameId]);
+    return result.rows
 }
 
 export async function returnRentalsRepository(returnDate, rentalId) {
@@ -35,6 +70,7 @@ export async function returnRentalsRepository(returnDate, rentalId) {
 
     return result
 }
+
 
 export async function deleteRentalsRepository(rentalId) {
     const result = await db.query(`

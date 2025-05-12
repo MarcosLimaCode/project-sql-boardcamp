@@ -5,6 +5,13 @@ export async function getCustomersRepository() {
     return result
 }
 
+export async function verifyNameRepository(cpf) {
+    const result = await db.query(`
+        SELECT * FROM customers 
+            WHERE cpf = $1;`, [cpf]);
+     return result.rows
+ }
+
 export async function createCustomersRepository(name, phone, cpf) {
     const result = await db.query(`
          INSERT INTO customers (name, phone, cpf)

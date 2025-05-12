@@ -1,4 +1,5 @@
-import { createCustomersRepository, getCustomersRepository } from "../repositories/customers.repository.js";
+import { conflictError } from "../error/errors.js";
+import { createCustomersRepository, getCustomersRepository, verifyNameRepository } from "../repositories/customers.repository.js";
 
 export async function getCustomersServices() {
     const result = await getCustomersRepository();
@@ -6,6 +7,8 @@ export async function getCustomersServices() {
 }
 
 export async function createCustomersServices({ name, phone, cpf }) {
-    const result = createCustomersRepository(name, phone, cpf);
-    return result
+    const registredName = await verifyNameRepository(cpf);
+    if(registredName.length !== 0) throw conflictError("CPF");
+    
+   return await createCustomersRepository(name, phone, cpf);
 }
