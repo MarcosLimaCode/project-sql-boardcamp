@@ -1,16 +1,11 @@
-import { db } from "../database/database.js";
+import { createCustomersServices, getCustomersServices } from "../services/customers.service.js";
 
 export async function getCustomers(req, res) {
-    const result = await db.query(`SELECT * FROM customers`);
-    return res.send(result.rows);
+    const result = await getCustomersServices();
+    return res.send(result);
 }
 
 export async function createCustomers(req, res) {
-    const { name, phone, cpf } = req.body;
-
-    await db.query(`
-        INSERT INTO customers (name, phone, cpf)
-        VALUES ($1, $2, $3);`, [name, phone, cpf]);
-
+    await createCustomersServices(req.body);
     return res.sendStatus(201);
 }

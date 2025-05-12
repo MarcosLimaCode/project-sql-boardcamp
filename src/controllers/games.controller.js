@@ -1,16 +1,11 @@
-import { db } from "../database/database.js";
+import { createGamesService, getGamesService } from "../services/games.service.js";
 
 export async function getGames(req, res) {
-    const result = await db.query(`SELECT * FROM games`);
-    return res.send(result.rows);
+    const result = await getGamesService();
+    return res.send(result);
 }
 
 export async function createGames(req, res) {
-    const { name, image, stockTotal, pricePerDay } = req.body;
-    
-    await db.query(`
-        INSERT INTO games (name, image, "stockTotal", "pricePerDay")
-        VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
-
+    await createGamesService(req.body);
     return res.sendStatus(201);
 }
