@@ -10,7 +10,6 @@ export async function getCustomersByIdRepository(id) {
     return result.rows;
 }
 
-
 export async function verifyNameRepository(cpf) {
     const result = await db.query(`
         SELECT * FROM customers 
