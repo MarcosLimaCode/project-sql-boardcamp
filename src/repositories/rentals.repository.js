@@ -10,39 +10,44 @@ export async function getRentalsRepository() {
                 ON "gameId" = games.id
         ;`)
 
-    return results
+    return results;
 }
 
 export async function verifyGameIdRepository(gameId) {
     const result = await db.query(`
         SELECT * FROM games 
             WHERE id = $1;`, [gameId]);
-    return result.rows.length
+
+    return result.rows.length;
 }
 
 export async function verifyGameStockRepository(gameId) {
     const result = await db.query(`
         SELECT * FROM games 
             WHERE id = $1;`, [gameId]);
-    return result.rows[0].stockTotal
+
+    return result.rows[0].stockTotal;
 }
 
 export async function verifyCustomerIdRepository(customerId) {
     const result = await db.query(`
         SELECT * FROM customers 
             WHERE id = $1;`, [customerId]);
-    return result.rows.length
+
+    return result.rows.length;
 }
 
 export async function verifyGameRentedRepository(gameId) {
     const result = await db.query(`
         SELECT * FROM rentals 
             WHERE "gameId" = $1;`, [gameId]);
-    return result.rows
+
+    return result.rows;
 }
 
 export async function findPriceRepository(gameId) {
     const result = await db.query(`SELECT "pricePerDay" FROM games WHERE id = $1;`, [gameId])
+
     return result;
 }
 
@@ -58,7 +63,8 @@ export async function verifyRentalIdRepository(gameId) {
     const result = await db.query(`
         SELECT * FROM rentals 
             WHERE id = $1;`, [gameId]);
-    return result.rows
+
+    return result.rows;
 }
 
 export async function returnRentalsRepository(returnDate, rentalId) {
@@ -68,9 +74,8 @@ export async function returnRentalsRepository(returnDate, rentalId) {
                 "delayFee" = GREATEST((($1 - "rentDate") - "daysRented")  * "originalPrice", 0)
             WHERE id = $2;`, [returnDate, rentalId])
 
-    return result
+    return result;
 }
-
 
 export async function deleteRentalsRepository(rentalId) {
     const result = await db.query(`

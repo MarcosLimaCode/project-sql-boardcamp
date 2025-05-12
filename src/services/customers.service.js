@@ -3,7 +3,8 @@ import { createCustomersRepository, getCustomersRepository, verifyNameRepository
 
 export async function getCustomersServices() {
     const result = await getCustomersRepository();
-    return result.rows
+
+    return result.rows;
 }
 
 export async function createCustomersServices({ name, phone, cpf }) {

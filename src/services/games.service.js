@@ -3,7 +3,8 @@ import { createGamesRepository, getGamesRepository, verifyGameRepository } from 
 
 export async function getGamesService() {
     const result = await getGamesRepository();
-    return result
+
+    return result;
 }
 
 export async function createGamesService({ name, image, stockTotal, pricePerDay }) {

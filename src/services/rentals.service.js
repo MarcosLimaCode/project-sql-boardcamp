@@ -26,7 +26,7 @@ export async function getRentalsService() {
         }
     }));
 
-    return rentalFormated
+    return rentalFormated;
 }
 
 export async function createRentalsService({ customerId, gameId, daysRented }) {
@@ -54,14 +54,13 @@ export async function returnRentalsService(rentalId) {
     const returnDate = moment().format('YYYY-MM-DD');
     const result = await returnRentalsRepository(returnDate, rentalId);
 
-    return result
+    return result;
 }
 
 export async function deleteRentalsService(rentalId) {
     const rentals = await verifyRentalIdRepository(rentalId);
     if (rentals.length === 0) throw notFoundError("Aluguel");
     if (rentals[0].returnDate === null) throw badRequestError();
-
 
     const result = deleteRentalsRepository(rentalId);
 
